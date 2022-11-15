@@ -1,17 +1,24 @@
-
 #include <stdio.h>
-
-
 
 int main()
 {
-    auto c = 0;
-    printf("Enter time");
+    auto  c = 0;
 
-    auto sc = scanf_s ("%d", &c);
+    auto printT = []() {
+        printf("Enter the waiting time(m): ");
+    };
+    printT();
 
-    printf("c == %d", c);
+    while (scanf_s("%d", &c) == 0)
+    {
+        while (getchar() != '\n');
+        printT();
 
-  
+    }
+
+
+
+
+    printf("WAITING:  %d", c);
     return 0;
 }
