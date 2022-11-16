@@ -1,3 +1,0 @@
-D:\Repos\alarm-clock\alarm-clock\x64\Release\alarm-clock.exe.lastcodeanalysissucceeded
-D:\Repos\alarm-clock\alarm-clock\x64\Release\NativeCodeAnalysis.read.1.tlog
-D:\Repos\alarm-clock\alarm-clock\x64\Release\alarm-clock.exe
