@@ -2,25 +2,44 @@
 #include <ctime>
 #include <cstdlib>
 #include <Windows.h>
+#include <wchar.h>
+#include <string>
 
 
 
 int main()
 {
-    auto  inWaitMinutes = 0;
+    // Set output mode to handle virtual terminal sequences
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (hOut == INVALID_HANDLE_VALUE)
+    {
+        return GetLastError();
+    }
 
-    
+    DWORD dwMode = 0;
+    if (!GetConsoleMode(hOut, &dwMode))
+    {
+        return GetLastError();
+    }
+
+    dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+    if (!SetConsoleMode(hOut, dwMode))
+    {
+        return GetLastError();
+    }
+
+    auto  inWaitMinutes = 0;
+    const auto strClear = std::wstring(100, L' ');
 
     auto printT = []() 
     {
-        printf("Enter the waiting time(m): ");
+        wprintf(L"Enter the waiting time(m): ");
     };
-    auto printWaiting = [&inWaitMinutes]() 
+    auto printWaiting = [&inWaitMinutes, &strClear]() 
     {
-            printf("WAITING:  %d\n", inWaitMinutes);
+        wprintf(L"\x1b[1;1HWAITING:  %d%s\x1b[?25l", inWaitMinutes, strClear.c_str());
+        wprintf(L"\n\x1b[1;31mPause: Click anywhere\nResume: <Enter>\r\x1b[0m");
     };
-
-
 
     printT();
 
@@ -61,9 +80,16 @@ int main()
             LeftSec = 60 - CurrTimeSecf;
         }
 
-        system("cls");
-
-        printf_s("TIMER: %02d:%02d \\ %02d:00\n", LeftMin, LeftSec, inWaitMinutes);
+        auto strCommand = std::wstring(L"\x1b[42m"); 
+        if (LeftMin <= 0 && LeftSec <= 59 && LeftSec >10)
+        {
+            strCommand = std::wstring(L"\x1b[43m");
+        }
+        else if (LeftMin == 0 && LeftSec <= 10)
+        {
+            strCommand = std::wstring(L"\x1b[41m");
+        }
+        wprintf(L"\x1b[1;1HTIMER: %s%02d:%02d\x1b[0m\\ %02d:00\r",strCommand.c_str(), LeftMin, LeftSec, inWaitMinutes);
     };
     
 
